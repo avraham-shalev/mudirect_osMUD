@@ -216,7 +216,7 @@ void handleDomain(DomainResolutions *dnsRes)
 			sprintf(msgBuf, format, i+1, dnsRes->deviceCount);
 			logMsg(OMS_INFO, msgBuf);
 
-			//parseMudAndExecuteRules(dnsRes->deviceList[i]);//TODO:Uncomment!
+			parseMudAndExecuteRules(dnsRes->deviceList[i]);//TODO:Uncomment!
 		}
 	}
 }

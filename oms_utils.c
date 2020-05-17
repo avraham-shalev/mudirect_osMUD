@@ -331,12 +331,36 @@ int isFileContainsStr(const char *filePath, const char *str)
 	return isContains; 
 }
 
+/* //TODO: escape also '/' '*' and other needed symbols.... */
+char *getEscapedStr(const char *strWithCharsToEscape)
+{
+int len = strlen(strWithCharsToEscape);
+        char escaped[1024] = {0};
+        int j=0;
+        for(int i=0;i<len;i++)
+        {
+                if(strWithCharsToEscape[i] =='$')
+                {
+                        escaped[i+j] = '\\';
+                        j++;
+                }
+                escaped[i+j] = strWithCharsToEscape[i];
+        }
+	char *retval = copystring(escaped);
+	return retval; //DOTO: caller need to free this string!!
+}
+
 int replaceTextInFile(const char *filePath, const char *oldStr, const char *newStr)
 {
 	char execBuf[1024] = {0};
 	char *format = "sed -i 's/%s/%s/g' %s";
 
-	sprintf(execBuf, format, oldStr, newStr, filePath);
+	char *escapedOldStr = getEscapedStr(oldStr);
+	char *escapedNewStr = getEscapedStr(newStr);
+	sprintf(execBuf, format, escapedOldStr, escapedNewStr, filePath);
+
+	safe_free(escapedOldStr);
+	safe_free(escapedNewStr);
 	
 	char msgBuf[1024] = {0};	
 	format = "replaceTextInFile::: START. Running cmd[%s]";
@@ -344,7 +368,7 @@ int replaceTextInFile(const char *filePath, const char *oldStr, const char *newS
 	logMsg(OMS_DEBUG, msgBuf);
 
 	system(execBuf);
-
+	
 	if(isFileContainsStr(filePath, oldStr))
 	{
 		format = "replaceTextInFile:::CRITIC ERROR:END. file[%s] contains oldstr[%s] after replacements!!!";
@@ -364,7 +388,11 @@ int deleteLinesThatContainsStrFromFile(const char *filePath, const char *str)
 {
 	char execBuf[1024] = {0};
 	char *format = "sed -i '/%s/d' %s";
-	sprintf(execBuf, format, str, filePath);
+	
+	char *escapedStr = getEscapedStr(str);
+	sprintf(execBuf, format, escapedStr, filePath);
+
+	safe_free(escapedStr);
 	
 	char msgBuf[1024] = {0};
 	format = "deleteLinesThatContainsStrFromFile::: START. Running cmd[%s]";

@@ -231,10 +231,22 @@ DhcpEvent *cloneDhcpEvent(const DhcpEvent *originalDhcpEvent)
 	dhcpEvent->hostName = copystring(originalDhcpEvent->hostName);
 	dhcpEvent->dhcpRequestFlags = copystring(originalDhcpEvent->dhcpRequestFlags);
 	dhcpEvent->dhcpVendor = copystring(originalDhcpEvent->dhcpVendor);
-	dhcpEvent->mudFileURL = copystring(originalDhcpEvent->mudFileURL);
-	dhcpEvent->mudSigURL = copystring(originalDhcpEvent->mudSigURL);
-	dhcpEvent->mudFileStorageLocation = copystring(originalDhcpEvent->mudFileStorageLocation);
-	dhcpEvent->mudSigFileStorageLocation = copystring(originalDhcpEvent->mudSigFileStorageLocation);
+	if(originalDhcpEvent->mudFileURL)
+	{
+		dhcpEvent->mudFileURL = copystring(originalDhcpEvent->mudFileURL);
+	}
+	if(originalDhcpEvent->mudSigURL)
+	{
+		dhcpEvent->mudSigURL = copystring(originalDhcpEvent->mudSigURL);
+	}
+	if(originalDhcpEvent->mudFileStorageLocation)
+	{
+		dhcpEvent->mudFileStorageLocation = copystring(originalDhcpEvent->mudFileStorageLocation);
+	}
+	if(originalDhcpEvent->mudSigFileStorageLocation)
+	{
+		dhcpEvent->mudSigFileStorageLocation = copystring(originalDhcpEvent->mudSigFileStorageLocation);
+	}
 	dhcpEvent->lanDevice = copystring(originalDhcpEvent->lanDevice);
 
 	logMsg(OMS_DEBUG, "cloneDhcpEvent::: END. returning cloned dhcpEvent..");
