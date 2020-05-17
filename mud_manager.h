@@ -1,0 +1,59 @@
+/* Copyright 2018 osMUD
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *    http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+#ifndef _OMS_DEVICE_INT
+#define _OMS_DEVICE_INT
+
+#include "udomains_manager.h"
+
+#define LAN_DEVICE_NAME "lan"
+#define WAN_DEVICE_NAME "wan"
+#define DNS_FILE_NAME_WITH_PATH "/var/osmud/dnswhitelist.txt"
+
+#define MUD_FILE_SIGNATURE_EXTENSION "p7s"
+#define MUD_FILE_DEFAULT_EXTENSION   "json"
+
+/* 0 indicates a valid mud file signature */
+#define VALID_MUD_FILE_SIG 0
+#define INVALID_MUD_FILE_SIG 1
+
+extern char *dnsWhiteListFile;
+extern char *mudFileDataDirectory;
+extern char *osmudConfigFile;
+extern char *dhcpEventFile;
+extern char *osmudPidFile;
+extern char *osMudLogFile;
+
+/* These prototypes are intended to be implemented by a device specific implementation and not in the mud manager */
+int installFirewallIPRule(char *srcIp, char *destIp, char *destPort, char *srcDevice, char *destDevice, char *protocol, char *ruleName, char *fwAction, char *aclType, char* hostName);
+int removeFirewallIPRule(char *ipAddr, char *macAddress);
+extern int installMudDbDeviceEntry(char *mudDbDir, char *ipAddr, char *macAddress, char *mudUrl, char *mudLocalFile, char *hostName);
+extern int removeMudDbDeviceEntry(char *mudDbDir, char *ipAddr, char *macAddress);
+extern int addDnsToDeviceDnsWhitelistFile(char *targetDomainName, char *srcIpAddr, char *srcMacAddr, char *srcHostName, char *dnsFileNameWithPath);
+extern int removeDeviceFromDnsWhitelistFile(char *srcIpAddr, char *srcMacAddr, char *dnsFileNameWithPath);
+extern int createMudfileStorage(char *mudFileDataLocationInfo);
+
+int verifyCmsSignature(char *mudFileLocation, char *mudSigFileLocation);
+int commitAndApplyFirewallRules();
+int rollbackFirewallConfiguration();
+/* END Device Specific Prototypes */
+
+
+DomainResolutions *resolveDnsEntryToIp(char *hostname);
+void freeDnsInfo(DomainResolutions *dnsRes);
+
+void resetDhcpCounters();
+void buildDhcpEventsLogMsg(char *buf, int bufSize);
+#endif
