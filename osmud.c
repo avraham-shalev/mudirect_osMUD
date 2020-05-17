@@ -138,7 +138,7 @@ void doProcessLoop(FD filed)
 		}
 
 		// Clear variables for next iteration
-			logMsg(OMS_VERBOSE, "doProcessLoop:::Calling clearDhcpEventRecord()");
+		logMsg(OMS_VERBOSE, "doProcessLoop:::Calling clearDhcpEventRecord()");
 
 		clearDhcpEventRecord(&dhcpEvent);
 
@@ -351,12 +351,12 @@ int main(int argc, char* argv[])
 		chdir("/tmp");
     }
 
-/* //TODO: Uncomment these lines!! they were commented by me for debugging!!!! i should close all std's......
-	// Close stdin. stdout and stderr
+//DOTO: Uncomment these lines!! they were commented by me for debugging!!!!
+// Close stdin. stdout and stderr
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	close(STDERR_FILENO);
-*/
+
 	if(startPollingUdomainsInDifferentThread(unique_domains_fd))
 		return -1;
 	doProcessLoop(filed);

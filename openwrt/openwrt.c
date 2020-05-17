@@ -164,8 +164,8 @@ int installMudDbDeviceEntry(char *mudDbDir, char *ipAddr, char *macAddress, char
 		(mudUrl?mudUrl:"-"), (mudLocalFile?mudLocalFile:"-"), (hostName?hostName:"-"));
 
 	char msgBuf[1024] = {0};
-	char *format = "installMudDbDeviceEntry:::Adding entry(to MudDbFile:[%s]) for device:IP[%s],MAC[%s]";
-	sprintf(msgBuf, format, line, filePath, ipAddr, macAddress);
+	char *format = "installMudDbDeviceEntry:::Adding line entry[%s] to MudDbFile:[%s] for the device";
+	sprintf(msgBuf, format, line, filePath);
 	logMsg(OMS_INFO, msgBuf);
 
 	retval = appendLineToFile(filePath, line);

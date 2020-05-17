@@ -53,7 +53,7 @@ char *copystring(const char *s)
 {
 	char *st;
 	char msgBuf[strlen(s) * 2 + 100];
-
+	memset(msgBuf, 0, strlen(s) * 2 + 100); //zero memory  so for sure the string will end with '\0'
 	sprintf(msgBuf, "copystring::: START. Copying string[%s]", s);
 	logMsg(OMS_VERBOSE, msgBuf);
 
@@ -89,9 +89,10 @@ int strcmpi(const char s1[], const char s2[])
 			i++;
 	} while (s1[i - 1] && s2[i - 1] && !diff);
 
-	char msgBuf[1024] = {0};
+	char msgBuf[strlen(s1) + strlen(s2) + 100];
+	memset(msgBuf, 0, strlen(s1) + strlen(s2) + 100); //zero memory  so for sure the string will end with '\0'
 	sprintf(msgBuf, "strcmpi:::str1[%s], str2[%s], returns: Difference[%d]", s1, s2, diff);
-	logMsg(OMS_DEBUG, msgBuf);
+	logMsg(OMS_VERBOSE, msgBuf);
 
 	return diff;
 }
@@ -336,23 +337,25 @@ int replaceTextInFile(const char *filePath, const char *oldStr, const char *newS
 	char *format = "sed -i 's/%s/%s/g' %s";
 
 	sprintf(execBuf, format, oldStr, newStr, filePath);
+	
+	char msgBuf[1024] = {0};	
 	format = "replaceTextInFile::: START. Running cmd[%s]";
-	sprintf(execBuf, format, execBuf);
-	logMsg(OMS_DEBUG, execBuf);
+	sprintf(msgBuf, format, execBuf);
+	logMsg(OMS_DEBUG, msgBuf);
 
 	system(execBuf);
 
 	if(isFileContainsStr(filePath, oldStr))
 	{
 		format = "replaceTextInFile:::CRITIC ERROR:END. file[%s] contains oldstr[%s] after replacements!!!";
-		sprintf(execBuf, format, filePath, oldStr);
-		logMsg(OMS_CRIT, execBuf);
+		sprintf(msgBuf, format, filePath, oldStr);
+		logMsg(OMS_CRIT, msgBuf);
 		return 0;
 	}
 
 	format = "replaceTextInFile::: END. Successfully replaced all oldstr[%s] with newStr[%s] in file[%s]";
-	sprintf(execBuf, format, oldStr, newStr, filePath);
-	logMsg(OMS_INFO, execBuf);
+	sprintf(msgBuf, format, oldStr, newStr, filePath);
+	logMsg(OMS_INFO, msgBuf);
 
 	return 1;
 }
@@ -406,13 +409,13 @@ int appendLineToFile(const char *filePath, const char *line)
 		logMsg(OMS_VERBOSE, "appendLineToFile:::Executing fclose(..)");
 		fclose(fp);
 
-		format = "appendLineToFile::: END. Successfully appended line[%s] to file[%s]";
+		format = "appendLineToFile::: Successfully appended line[%s] to file[%s]";
 		sprintf(msgBuf, format, line, filePath);
-		logMsg(OMS_INFO, msgBuf);		
+		logMsg(OMS_DEBUG, msgBuf);
         }
         else
 	{
-		format = "appendLineToFile:::CRITIC ERROR: END. Cannot append line[%s] to file[%s]!!!!!!";
+		format = "appendLineToFile:::CRITIC ERROR: Cannot append line[%s] to file[%s]!!!!!!";
 		sprintf(msgBuf, format, line, filePath);
 		logMsg(OMS_CRIT, msgBuf);
 		retval = 0;
