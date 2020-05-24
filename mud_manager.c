@@ -446,10 +446,10 @@ void executeDelDhcpAction(DhcpEvent *dhcpEvent)
 		sprintf(msgBuf, msg, dhcpEvent->ipAddress, dhcpEvent->macAddress);
 		logMsg(OMS_INFO, msgBuf);
 
+		unlinkDeviceFromItsCompany(dhcpEvent);
 		removeFirewallIPRule(dhcpEvent->ipAddress, dhcpEvent->macAddress);
 		commitAndApplyFirewallRules();
 		/* //TODO: check implementation!!! */
-		unlinkDeviceFromItsCompany(dhcpEvent);
 		removeMudDbDeviceEntry(mudFileDataDirectory, dhcpEvent->ipAddress, dhcpEvent->macAddress);
 		removeDeviceFromDnsWhitelistFile(dhcpEvent->ipAddress, dhcpEvent->macAddress, dnsWhiteListFile);
 	}
@@ -476,7 +476,7 @@ void executeOpenMudDhcpAction(DhcpEvent *dhcpEvent)
 				break;
 			default:
 				dhcpErrorEventCount++;
-				msg = "executeOpenMudDhcpAction:::Bad dhcp event action code.no action taken.";
+				msg = "executeOpenMudDhcpAction::: Bad dhcp event action code.no action taken.";
 				logMsg(OMS_WARN, msg);
 		}
 	}
@@ -506,13 +506,6 @@ DomainResolutions *resolveDnsEntryToIp(char *hostname)
 	{
 		sprintf(msgBuf, "resolveDnsEntryToIp:::hostname [%s] was received from UDomainsManager", hostname);
 		logMsg(OMS_DEBUG, msgBuf);
-
-		while(existingDnsRes->isLocked == 1)
-		{
-			format = "resolveDnsEntryToIp:::Waiting since domain is Locked!!!";
-			logMsg(OMS_WARN, format);
-			sleep(2);
-		}
 
 		dnsRes->ipCount = existingDnsRes->ipCount;
 

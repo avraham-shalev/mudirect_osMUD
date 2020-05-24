@@ -92,8 +92,6 @@ void *startPollUniqueDomainsFile(void *param)
 
 	while (1)
 	{
-		//Dont block context switches, let the process sleep for some time
-		sleep(10);
 		logMsg(OMS_VERBOSE, "startPollUniqueDomainsFile::: waken-up!");
 
 		if ((hhh = pollUdomainsFile(udomainLine, MAXLINE, _udomains_fd)) != 0)
@@ -102,10 +100,10 @@ void *startPollUniqueDomainsFile(void *param)
 			processUdomainFromLog(udomainLine, dnsRes);
 			addDomainToFollow(dnsRes);
 		}
-		else
-		{
-			logMsg(OMS_VERBOSE, "startPollUniqueDomainsFile::: going to sleep...");
-		}
+
+		logMsg(OMS_VERBOSE, "startPollUniqueDomainsFile::: going to sleep...");
+		//Dont block context switches, let the process sleep for some time
+		sleep(10);
 	}
 }
 
@@ -120,7 +118,7 @@ int startPollingUdomainsInDifferentThread(FD udomains)
 	errCode = pthread_create(&_tidPoller, NULL, &startPollUniqueDomainsFile, NULL);
 	if (errCode != 0)
 	{
-		printf("OSMUD could not run the thread that polls udomains! QUITTING!");
+		printf("startPollingUdomainsInDifferentThread:::OSMUD could not run the thread that polls udomains! QUITTING!");
 	}
 	
 	logMsg(OMS_INFO, "startPollingUdomainsInDifferentThread::: END");

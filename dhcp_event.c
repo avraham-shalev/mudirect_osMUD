@@ -192,6 +192,7 @@ void clearDhcpEventRecord(DhcpEvent *dhcpEvent)
 	logMsg(OMS_VERBOSE, "clearDhcpEventRecord::: START. Calling safe_free()");
 
 	dhcpEvent->action = NONE;
+
 	safe_free(dhcpEvent->date);
 	safe_free(dhcpEvent->macAddress);
 	safe_free(dhcpEvent->ipAddress);
@@ -203,7 +204,6 @@ void clearDhcpEventRecord(DhcpEvent *dhcpEvent)
 	safe_free(dhcpEvent->mudFileStorageLocation);
 	safe_free(dhcpEvent->mudSigFileStorageLocation);
 
-	dhcpEvent->action = NONE;
 	dhcpEvent->date = NULL;
 	dhcpEvent->macAddress = NULL;
 	dhcpEvent->ipAddress = NULL;

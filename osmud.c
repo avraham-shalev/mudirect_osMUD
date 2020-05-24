@@ -124,6 +124,7 @@ void doProcessLoop(FD filed)
 			if (processDhcpEventFromLog(dhcpEventLine, &dhcpEvent))
 			{
 				// There is a valid DHCP event to process
+				acquireLock();
 				logMsg(OMS_DEBUG, "doProcessLoop:::Going to process DHCP Event..Calling executeOpenMudDhcpAction()");
 				executeOpenMudDhcpAction(&dhcpEvent);
 			}
@@ -148,6 +149,7 @@ void doProcessLoop(FD filed)
 		}
 
 		logMsg(OMS_VERBOSE, "doProcessLoop::: Going to sleep..");
+		releaseLock();
 	}
 }
 

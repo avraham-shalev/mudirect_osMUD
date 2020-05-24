@@ -22,9 +22,32 @@
 #include <sys/errno.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <pthread.h>
 
 #include "oms_messages.h"
 #include "oms_utils.h"
+
+int _lockInitialized = 0;
+pthread_mutex_t _lockObj;
+
+void acquireLock()
+{
+	if(!_lockInitialized)
+	{
+		pthread_mutex_init(&_lockObj, NULL);
+		_lockInitialized = 1;
+	}
+	pthread_mutex_lock(&_lockObj);
+}
+
+void releaseLock()
+{
+	if(!_lockInitialized)
+	{
+		return;
+	}
+	pthread_mutex_unlock(&_lockObj);
+}
 
 char *safe_malloc(unsigned n)
 {

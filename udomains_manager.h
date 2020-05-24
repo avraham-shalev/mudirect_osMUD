@@ -8,7 +8,6 @@ typedef struct {
 	int ipCount;
 	DhcpEvent *deviceList[50];
 	int deviceCount;
-	int isLocked;
 } DomainResolutions;
 
 void addDomainToFollow(DomainResolutions *dnsRes);

@@ -20,6 +20,9 @@
 
 typedef int FD;
 
+void acquireLock();
+void releaseLock();
+
 char *safe_malloc(unsigned n);
 void safe_free(void *p);
 char *copystring(const char *s);
