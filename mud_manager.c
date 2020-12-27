@@ -114,7 +114,7 @@ int processFromAccess(char *aclName, char *aclType, AclEntry *acl, DhcpEvent *ev
 							dnsInfo->ipList[j],
 							portRangeBuffer,
 							LAN_DEVICE_NAME,
-							WAN_DEVICE_NAME,
+							isPrivateIP(dnsInfo->ipList[j]) ? LAN_DEVICE_NAME : WAN_DEVICE_NAME,
 							acl->aceList[i].protocol,
 							acl->aceList[i].ruleName,
 							acl->aceList[i].actionsForwarding,
@@ -174,7 +174,7 @@ int processToAccess(char *aclName, char *aclType, AclEntry *acl, DhcpEvent *even
     			actionResult = installFirewallIPRule(	dnsInfo->ipList[j], /* srcIp */
 								event->ipAddress, /* destIp */
 								portRangeBuffer, /* destPort */
-								WAN_DEVICE_NAME, /* srcDevice - lan or wan */
+								isPrivateIP(dnsInfo->ipList[j]) ? LAN_DEVICE_NAME : WAN_DEVICE_NAME, /* srcDevice - lan or wan */
 								LAN_DEVICE_NAME, /* destDevice - lan or wan */
 								acl->aceList[i].protocol, /* protocol - tcp/udp */
 								acl->aceList[i].ruleName, /* rule name */
@@ -312,11 +312,26 @@ int parseMudAndExecuteRules(DhcpEvent *dhcpEvent)
 						dhcpEvent->hostName	/* hostname of the device */ );
 	if (actionResult)
 	{
-		msg = "parseMudAndExecuteRules:::ERROR:Problems installing default restrict rule!!!";
+		msg = "parseMudAndExecuteRules:::ERROR:Problems installing default WAN restrict rule!!!";
 		logMsg(OMS_CRIT, msg);
 		retval = 1;
 	}
-
+	actionResult = installFirewallIPRule("any", 	/* srcIp */
+						dhcpEvent->ipAddress,		/* destIp */
+						"any",			/* destPort */
+						LAN_DEVICE_NAME,	/* srcDevice - lan or wan */
+						LAN_DEVICE_NAME,	/* destDevice - lan or wan */
+						"all",			/* protocol - tcp/udp/icmp */
+						"REJECT-ALL",		/* rule name //TODO: name by device name */
+						"DROP",			/* ACCEPT or DROP or REJECT */
+						"all",			/* */
+						dhcpEvent->hostName	/* hostname of the device */);
+	if (actionResult)
+	{
+		msg = "parseMudAndExecuteRules:::ERROR:Problems installing default LAN (to device) restrict rule!!!";
+		logMsg(OMS_CRIT, msg);
+		retval = 1;
+	}
 	// Lastly, commit rules and restart the firewall subsystem
 	if (retval == 0)
 	{

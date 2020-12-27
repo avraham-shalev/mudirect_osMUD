@@ -476,3 +476,37 @@ int appendLineToFile(const char *filePath, const char *line)
 
 	return retval;
 }
+
+/* Private IP Addresses are 10.X.Y.Z, 172.16.X.Y-172.31.X.Y, 192.168.X.Y */
+int isPrivateIP(const char *ip)
+{
+	int retVal = 0;
+	char *octets[2];
+	const int MAX_IP_LENGTH = 15;
+	char *ipAsStr = safe_malloc(MAX_IP_LENGTH + 1);
+	strcpy(ipAsStr, ip);
+
+	octets[0] = strtok(ipAsStr, ".");
+	if (!strcmp(octets[0], "10")) // handle IPs 10.X.Y.Z
+	{
+		retVal = 1;
+		goto END;
+	}
+
+	octets[1] = strtok(NULL, ".");
+	if (!strcmp(octets[0], "192") && !strcmp(octets[1], "168")) //handle IPs 192.168.X.Y
+	{
+		retVal = 1;
+		goto END;
+	}
+	if (!strcmp(octets[0], "172")) //handle IP range 172.16.X.Y-172.31.X.Y
+	{
+		int octet2Int = atoi(octets[1]);
+		retVal = octet2Int >= 16 && octet2Int <= 31;
+		goto END;
+	}
+
+END:
+	safe_free(ipAsStr);
+	return retVal;
+}

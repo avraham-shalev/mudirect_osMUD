@@ -38,5 +38,6 @@ int isFileContainsStr(const char *filePath, const char *str);
 int replaceTextInFile(const char *filePath, const char *oldStr, const char *newStr);
 int deleteLinesThatContainsStrFromFile(const char *filePath, const char *str);
 int appendLineToFile(const char *filePath, const char *line);
+int isPrivateIP(const char *ip);
 
 #endif
